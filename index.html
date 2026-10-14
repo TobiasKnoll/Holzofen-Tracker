@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#18241e">
+<title>Holzofen – Verbrauch</title>
+<style>
+:root{color-scheme:dark;--bg:#111b16;--panel:#1c2b22;--panel2:#24372b;--txt:#f5f4ec;--muted:#b9c5b9;--accent:#f2b35d;--line:#425747;--red:#ffb0a5}*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--txt);margin:0;padding:calc(16px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom));line-height:1.45}.wrap{max-width:720px;margin:auto}header{display:flex;align-items:center;gap:12px;margin-bottom:20px}.flame{font-size:34px}h1{font-size:24px;line-height:1.15;margin:0}h2{font-size:18px;margin:0 0 12px}.sub,.note{color:var(--muted);font-size:13px}.panel{background:var(--panel);padding:17px;border:1px solid var(--line);border-radius:17px;margin:14px 0;box-shadow:0 4px 15px #0002}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{background:var(--panel2);border-radius:12px;padding:13px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{font-variant-numeric:tabular-nums;font-size:26px;color:var(--accent)}label{font-weight:650;display:block;margin:12px 0 7px}select,input,button{font:inherit;min-height:45px;border-radius:11px}select,input{background:#121f18;border:1px solid #69806d;color:white;width:100%;padding:10px 12px;font-size:16px}button{background:var(--accent);color:#212017;border:0;padding:10px 15px;font-weight:750;cursor:pointer}button.secondary{background:#364b3c;color:#fff;border:1px solid #6d826f}summary.newfill{display:block;background:var(--accent);color:#212017;border-radius:11px;padding:12px 18px;font-size:17px;font-weight:750;text-align:center;cursor:pointer;list-style:none}summary.newfill::after{content:none!important}details.newfilldetails{margin:0;padding:0;border:0;background:transparent}details.newfilldetails>div{margin-top:13px}button.percentbtn{background:#364b3c;color:#fff;border:1px solid #a0b19d;flex:1 1 28%;font-size:20px;min-height:64px}button.danger{background:#5b322b;color:#ffe5df}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}.hidden{display:none!important}details{border-radius:16px;background:var(--panel);border:1px solid var(--line);margin:14px 0;padding:16px}summary{cursor:pointer;font-weight:800;font-size:18px;list-style:none;display:flex;align-items:center;justify-content:space-between}summary::after{content:'⌄';color:var(--accent);font-size:21px}details[open] summary::after{content:'⌃'}details>div{margin-top:13px}.item{padding:12px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.item:last-child{border-bottom:0}.item small{color:var(--muted);display:block}.item b{font-variant-numeric:tabular-nums}.smallbtn{font-size:12px;min-height:34px;padding:6px 10px}.graph{width:100%;height:240px;display:block;background:#17251c;border-radius:11px}.notice{padding:10px 12px;border-radius:9px;background:#39402a;color:#fff1cd;margin-top:12px;font-size:13px}.status{min-height:1.4em;font-size:13px;margin:10px 0;color:#e2d9a5}footer{color:var(--muted);font-size:12px;margin:18px 2px}code{font-size:12px}a{color:var(--accent)}
+</style></head><body><main class="wrap">
+<header><div class="flame">🔥</div><div><h1>Holzofen-Tracker</h1><div class="sub">Holzfüllungen erfassen und Verbrauch auswerten</div></div></header>
+<section class="panel"><h2>Verbrauch in Ster</h2><div class="stats"><div class="stat"><span>Gesamt</span><strong id="total">0,000</strong></div><div class="stat"><span>Dieser Monat</span><strong id="month">0,000</strong></div><div class="stat"><span>Diese Woche (Mo–So)</span><strong id="week">0,000</strong></div><div class="stat"><span>Heute</span><strong id="today">0,000</strong></div></div><p class="note" id="count"></p></section>
+<section class="panel"><h2>Neue Füllung erfassen</h2><p class="note">Vollständige Füllung: <b>0,154 Ster</b></p><details id="fillingDetails" class="newfilldetails"><summary class="newfill">Neue Füllung</summary><div><p><b>Wie voll hast du den Ofen gefüllt?</b></p><div class="row" id="percentButtons"><button class="percentbtn" type="button" data-percent="25" onclick="saveFilling(25)">25 %</button><button class="percentbtn" type="button" data-percent="50" onclick="saveFilling(50)">50 %</button><button class="percentbtn" type="button" data-percent="75" onclick="saveFilling(75)">75 %</button><button class="percentbtn" type="button" data-percent="85" onclick="saveFilling(85)">85 %</button><button class="percentbtn" type="button" data-percent="100" onclick="saveFilling(100)">100 %</button></div><p class="note">Antippen speichert die Füllung sofort mit Datum und Uhrzeit.</p><button id="cancel" class="secondary" type="button">Abbrechen</button></div></details><div id="msg" class="status" role="status" aria-live="polite"></div><div id="jsWarning" class="notice">⚠️ Die Speicherfunktion ist hier nicht aktiv. Öffne diese Webseite direkt in Safari über eine HTTPS-Webadresse. Die Vorschau der iPhone-Dateien-App führt JavaScript möglicherweise nicht aus.</div><div id="storageWarning" class="notice hidden">⚠️ Dieser Browser verhindert das dauerhafte Speichern. Bitte die Seite über eine feste HTTPS-Webadresse in Safari öffnen.</div></section>
+<details id="historyDetails"><summary>Bisherige Einträge</summary><div><label for="historySelect">Eintrag auswählen</label><select id="historySelect"><option value="">Bitte auswählen</option></select><div id="historyDetail" class="note">Noch keinen Eintrag ausgewählt.</div><p class="note" id="empty"></p></div></details>
+<details id="chartDetails"><summary>Verbrauchsdiagramm</summary><div><label for="chartType">Zeitraum auswählen</label><select id="chartType"><option value="day">Tag (Stunden)</option><option value="week" selected>Woche (Tage)</option><option value="month">Monat (Kalenderwochen)</option><option value="year">Jahr (Monate)</option><option value="season">Heizperiode (Oktober–April)</option><option value="all">Gesamt (Jahre)</option></select><canvas id="chart" class="graph" role="img" aria-label="Kumulatives Liniendiagramm des erfassten Holzverbrauchs in Ster"></canvas><p class="note" id="chartNote">Kumulierte Holzmenge in Ster</p></div></details>
+<details><summary>Datensicherung</summary><div><p class="note">Die Kammergröße ist fest auf 0,154 Ster eingestellt und kann nicht geändert werden.</p><div class="row"><button id="export" class="secondary" type="button">Daten sichern (JSON)</button><button id="importBtn" class="secondary" type="button">Daten importieren</button></div><input id="importFile" class="hidden" type="file" accept="application/json,.json"><p class="note">Beim Import werden Einträge mit gleicher ID nicht doppelt angelegt.</p></div></details>
+<div class="notice">Die Einträge werden <b>nur auf diesem Gerät in diesem Browser</b> gespeichert. Sie werden nicht zwischen Geräten synchronisiert. Für zuverlässigen Dauereinsatz diese HTML-Seite über eine feste HTTPS-Adresse in Safari öffnen; regelmäßig eine JSON-Sicherung exportieren. Beim Löschen von Safari-Websitedaten können die Einträge verloren gehen.</div>
+<footer>Berechnung: Füllung in Ster = 0,154 × Füllprozentsatz / 100. Die Auswertung beruht auf den erfassten Füllungen; tatsächliche Verbrennung bzw. Restholz im Ofen wird nicht separat gemessen.</footer>
+</main><script>
+'use strict';
+const DATA_KEY='holzofen_entries_v1', capacity=0.154;
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n).toLocaleString('de-DE',{minimumFractionDigits:3,maximumFractionDigits:4});
+function load(){try{const x=JSON.parse(localStorage.getItem(DATA_KEY)||'[]');return Array.isArray(x)?x.filter(isEntry):[]}catch{return []}}
+function isEntry(e){return !!e&&typeof e.id==='string'&&typeof e.time==='string'&&!isNaN(new Date(e.time).getTime())&&Number.isFinite(e.percent)&&e.percent>0&&e.percent<=100&&Number.isFinite(e.ster)&&e.ster>=0&&Number.isFinite(e.capacity)&&e.capacity>0}
+let entries=load();
+function resetForm(){$('fillingDetails').open=false}
+$('cancel').addEventListener('click',resetForm);
+function persist(){localStorage.setItem(DATA_KEY,JSON.stringify(entries));render()}
+function saveFilling(p){
+ if(![25,50,75,85,100].includes(p))return;
+ const date=new Date(),ster=capacity*p/100;
+ const entry={id:String(date.getTime())+'-'+Math.random(),time:date.toISOString(),percent:p,capacity:capacity,ster:ster};
+ entries.push(entry);
+ try{
+  localStorage.setItem(DATA_KEY,JSON.stringify(entries));
+  const check=JSON.parse(localStorage.getItem(DATA_KEY)||'[]');
+  if(!Array.isArray(check)||!check.some(e=>e.id===entry.id))throw Error('Speicherung nicht bestätigt');
+  $('msg').textContent='✓ '+p+' % erfolgreich gespeichert: '+fmt(ster)+' Ster · '+date.toLocaleString('de-DE');
+  resetForm();render();
+ }catch(e){
+  entries=entries.filter(x=>x.id!==entry.id);
+  $('msg').textContent='Speichern nicht möglich: Safari blockiert die lokale Speicherung.';
+  $('storageWarning').classList.remove('hidden');
+ }
+}
+
+function localDay(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function monday(d){let v=new Date(d.getFullYear(),d.getMonth(),d.getDate());v.setDate(v.getDate()-(v.getDay()+6)%7);return v}
+function sumWhere(fn){return entries.reduce((s,e)=>fn(new Date(e.time))?s+e.ster:s,0)}
+function sorted(){return [...entries].sort((a,b)=>new Date(b.time)-new Date(a.time))}
+function render(){const now=new Date(),curDay=localDay(now),mo=monday(now),month=now.getFullYear()+'-'+now.getMonth();$('total').textContent=fmt(entries.reduce((s,e)=>s+e.ster,0));$('today').textContent=fmt(sumWhere(d=>localDay(d)===curDay));$('week').textContent=fmt(sumWhere(d=>d>=mo&&d<=now));$('month').textContent=fmt(sumWhere(d=>d.getFullYear()+'-'+d.getMonth()===month));$('count').textContent=entries.length+' Füllung'+(entries.length===1?'':'en')+' erfasst · Kammergröße derzeit '+fmt(capacity)+' Ster';const s=$('historySelect'),selected=s.value;s.replaceChildren(new Option('Bitte auswählen',''));sorted().forEach(e=>{const d=new Date(e.time);s.add(new Option(d.toLocaleString('de-DE')+' – '+e.percent+' % – '+fmt(e.ster)+' Ster',e.id))});if(entries.some(e=>e.id===selected))s.value=selected;else s.value='';showEntry();$('empty').textContent=entries.length?'':'Es sind noch keine Füllungen gespeichert.';draw()}
+function showEntry(){const e=entries.find(x=>x.id===$('historySelect').value),el=$('historyDetail');el.replaceChildren();if(!e){el.textContent='Einen Eintrag aus der Liste auswählen.';return}const p=document.createElement('p');p.textContent='Datum und Uhrzeit: '+new Date(e.time).toLocaleString('de-DE')+' · Füllmenge: '+e.percent+' % · Kammer: '+fmt(e.capacity)+' Ster · Verbrauch: '+fmt(e.ster)+' Ster';const b=document.createElement('button');b.className='danger smallbtn';b.textContent='Diesen Eintrag löschen';b.addEventListener('click',()=>{if(confirm('Diesen Eintrag wirklich löschen?')){entries=entries.filter(x=>x.id!==e.id);try{persist()}catch{alert('Löschen konnte nicht gespeichert werden.')}}});el.append(p,b)}
+$('historySelect').addEventListener('change',showEntry);
+$('chartType').addEventListener('change',draw);$('chartDetails').addEventListener('toggle',draw);window.addEventListener('resize',draw);
+function isoWeek(d){
+ const u=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+ u.setUTCDate(u.getUTCDate()+4-(u.getUTCDay()||7));
+ const year=u.getUTCFullYear(),jan1=new Date(Date.UTC(year,0,1));
+ return {week:Math.ceil((((u-jan1)/86400000)+1)/7),year};
+}
+function chartBuckets(){
+ const type=$('chartType').value,now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),arr=[];
+ const add=(start,end,label)=>arr.push({start,end,label});
+ if(type==='day'){
+  for(let h=0;h<24;h++)add(new Date(today.getFullYear(),today.getMonth(),today.getDate(),h),new Date(today.getFullYear(),today.getMonth(),today.getDate(),h+1),String(h).padStart(2,'0'));
+ }else if(type==='week'){
+  const m=monday(now);
+  for(let i=0;i<7;i++){
+   const d=new Date(m.getFullYear(),m.getMonth(),m.getDate()+i);
+   add(d,new Date(d.getFullYear(),d.getMonth(),d.getDate()+1),['Mo','Di','Mi','Do','Fr','Sa','So'][i]);
+  }
+ }else if(type==='month'){
+  const first=new Date(now.getFullYear(),now.getMonth(),1),last=new Date(now.getFullYear(),now.getMonth()+1,1);
+  let cursor=monday(first);
+  while(cursor<last){
+   const end=new Date(cursor.getFullYear(),cursor.getMonth(),cursor.getDate()+7),kw=isoWeek(cursor);
+   add(new Date(Math.max(+first,+cursor)),new Date(Math.min(+last,+end)),'KW '+kw.week);
+   cursor=end;
+  }
+ }else if(type==='year'){
+  for(let m=0;m<12;m++){
+   const d=new Date(now.getFullYear(),m,1);
+   add(d,new Date(now.getFullYear(),m+1,1),d.toLocaleDateString('de-DE',{month:'short'}));
+  }
+ }else if(type==='season'){
+  const startYear=now.getMonth()>=9?now.getFullYear():now.getFullYear()-1;
+  for(let i=0;i<7;i++){
+   const d=new Date(startYear,9+i,1);
+   add(d,new Date(startYear,10+i,1),d.toLocaleDateString('de-DE',{month:'short'}));
+  }
+ }else{
+  const years=entries.map(e=>new Date(e.time).getFullYear()).filter(Number.isFinite);
+  const first=years.length?Math.min(...years):now.getFullYear();
+  for(let y=first;y<=now.getFullYear();y++)add(new Date(y,0,1),new Date(y+1,0,1),String(y));
+ }
+ const result=arr.map(b=>({...b,value:sumWhere(d=>d>=b.start&&d<b.end&&d<=now)}));
+ let cumulative=0;result.forEach(b=>{cumulative+=b.value;b.cumulative=cumulative});
+ return result;
+}
+function draw(){
+ const cv=$('chart');if(!$('chartDetails').open)return;
+ const w=Math.max(270,cv.getBoundingClientRect().width||320),H=260,scale=window.devicePixelRatio||1;
+ cv.width=Math.round(w*scale);cv.height=Math.round(H*scale);
+ const c=cv.getContext('2d');if(!c)return;
+ c.setTransform(scale,0,0,scale,0,0);c.clearRect(0,0,w,H);
+ const data=chartBuckets(),total=data.length?data[data.length-1].cumulative:0;
+ const max=total>0?total:0.1,left=56,right=12,top=22,bottom=65,pw=w-left-right,ph=H-top-bottom;
+ c.font='11px -apple-system, BlinkMacSystemFont, sans-serif';c.textAlign='right';
+ for(let i=0;i<=4;i++){
+  const y=top+ph*(1-i/4);
+  c.strokeStyle='#415445';c.lineWidth=1;c.beginPath();c.moveTo(left,y);c.lineTo(w-right,y);c.stroke();
+  c.fillStyle='#c4cbbf';c.fillText(fmt(max*i/4),left-7,y+4);
+ }
+ const X=i=>left+pw*i/Math.max(1,data.length);
+ const Y=v=>top+ph*(1-v/max);
+ // Stufenlinie: innerhalb eines Zeitabschnitts ohne Füllung waagerecht;
+ // bei Verbrauch steigt sie am Ende des Zeitabschnitts an.
+ c.beginPath();c.moveTo(X(0),Y(0));
+ let prev=0;
+ data.forEach((b,i)=>{c.lineTo(X(i+1),Y(prev));c.lineTo(X(i+1),Y(b.cumulative));prev=b.cumulative});
+ c.lineWidth=3;c.lineJoin='round';c.strokeStyle='#f2b35d';c.stroke();
+ c.fillStyle='#f2b35d';data.forEach((b,i)=>{if(b.value>0){c.beginPath();c.arc(X(i+1),Y(b.cumulative),3.5,0,2*Math.PI);c.fill()}});
+ // Bei 24 Stunden nur jede dritte Stunde beschriften; Wochentage und Monate vollständig.
+ const every=$('chartType').value==='day'?3:(data.length>13?Math.ceil(data.length/10):1);
+ data.forEach((b,i)=>{
+  if(i%every!==0)return;
+  const x=X(i+.5);c.save();c.translate(x,H-35);c.rotate(-Math.PI/4);c.fillStyle='#dae4d6';c.textAlign='right';c.fillText(b.label,0,0);c.restore();
+ });
+ const type=$('chartType').value,now=new Date();
+ let name={day:'Heute',week:'Aktuelle Woche (Mo–So)',month:'Aktueller Monat',year:'Aktuelles Jahr',season:'Aktuelle Heizperiode (Oktober bis April)',all:'Gesamter Erfassungszeitraum'}[type];
+ if(type==='season'){const y=now.getMonth()>=9?now.getFullYear():now.getFullYear()-1;name+=' '+y+'/'+(y+1)}
+ $('chartNote').textContent=name+' · Kumuliert: '+fmt(total)+' Ster. Die Linie steigt bei erfassten Füllungen und bleibt sonst waagerecht.';
+}
+$('export').addEventListener('click',()=>{const data={type:'holzofen-tracker',version:1,exported:new Date().toISOString(),capacity,entries};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Holzofen_Sicherung_'+localDay(new Date())+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+$('importBtn').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const o=JSON.parse(await file.text());if(o.type!=='holzofen-tracker'||!Array.isArray(o.entries)||!o.entries.every(isEntry))throw Error('Ungültige Sicherungsdatei');if(!confirm(o.entries.length+' Einträge importieren? Bereits vorhandene IDs werden übersprungen.'))return;const map=new Map(entries.map(x=>[x.id,x]));o.entries.forEach(x=>{if(!map.has(x.id))map.set(x.id,x)});entries=[...map.values()];persist();alert('Import abgeschlossen. Insgesamt '+entries.length+' Einträge vorhanden.')}catch(err){alert('Import fehlgeschlagen: '+err.message)}finally{e.target.value=''}});
+$('jsWarning').classList.add('hidden');
+try{const k='holzofen_storage_test';localStorage.setItem(k,'ok');if(localStorage.getItem(k)!=='ok')throw Error('nicht beschreibbar');localStorage.removeItem(k)}catch(e){$('storageWarning').classList.remove('hidden')}
+render();
+</script></body></html>
